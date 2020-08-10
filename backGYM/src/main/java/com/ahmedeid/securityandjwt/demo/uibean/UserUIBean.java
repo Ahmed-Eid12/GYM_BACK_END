@@ -2,6 +2,7 @@ package com.ahmedeid.securityandjwt.demo.uibean;
 
 public class UserUIBean {
 
+	private Integer id;
 	private String username;
 	private String email;
 	private String password;
@@ -32,6 +33,14 @@ public class UserUIBean {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 }

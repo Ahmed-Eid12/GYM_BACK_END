@@ -8,7 +8,10 @@ import javax.persistence.EntityManager;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +25,25 @@ public class HQLDaoService {
 	@Autowired
 	private EntityManager entityManager;
 
-	public List<User> getByPassword() {
+	public boolean updatePassword(String password, int id) {
 
 		Session session = entityManager.unwrap(Session.class);
+		boolean status = false;
 
-		Query<User> userSQL = session.createQuery("from User where password=123456", User.class);
+		Query updateuserPassword = session.createQuery("update User u set u.password= : password "
+				+ " where u.id= :id");
 
-		List<User> users = userSQL.getResultList();
+		updateuserPassword.setParameter("password", password);
+		updateuserPassword.setParameter("id", id);
+		
+		int resultStatus = updateuserPassword.executeUpdate();
 
-		return users;
+		if (resultStatus != 0) {
+			status = true;
+			entityManager.close();
+			session.close();
+		}
+		return status;
 
 	}
 

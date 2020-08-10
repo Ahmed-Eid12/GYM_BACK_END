@@ -18,17 +18,18 @@ import com.ahmedeid.securityandjwt.demo.repository.UserRepository;
 @Service
 public class UserService implements UserDetailsService {
 
-	@Autowired UserRepository userRepository;
-	
+	@Autowired
+	UserRepository userRepository;
+
 	@Bean
 	private PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(username);
-		if(user == null) {
+		if (user == null) {
 			return null;
 		}
 		return user;
@@ -49,16 +50,39 @@ public class UserService implements UserDetailsService {
 
 	// save new user
 	public User saveUser(User user) {
-		System.out.println("password : " +user.getPassword());
 		user.setPassword(this.passwordEncoder().encode(user.getPassword()));
 		user.setDateModify(new Date());
-		user.setCode((System.currentTimeMillis()+12)+3000);
+		user.setCode((System.currentTimeMillis() + 12) + 3000);
 		User newUser = userRepository.save(user);
 		return newUser;
 	}
 
-	// delete user
+	// update User ...
+	public User saveUserWithExistPassword(User user) {
+		user.setDateModify(new Date());
+		User newUser = userRepository.save(user);
+		return newUser;
+	}
+
+	// delete user ...
 	public void deleteUser(int id) {
 		userRepository.deleteById(id);
 	}
+	
+	// check old password ...
+	public boolean checkOldPassword(String passwordFromUI ,String passwordInDB) {
+		boolean status = false;
+		if(passwordFromUI != null && passwordInDB != null) {
+			status = this.passwordEncoder().matches(passwordFromUI, passwordInDB);	
+		}
+		
+		return status;
+	}
+	
+	// encode new password ...
+	public String encodeNewPassword(String password) {
+		String newPassword = this.passwordEncoder().encode(password);
+		return newPassword;
+	}
+	
 }

@@ -42,13 +42,13 @@ public class PlayerService {
 
 	// delete player By id ....
 	public boolean deletePlayerById(int id) {
-		boolean status = false;
 		Player player = getPlayerById(id);
+		System.out.println(player);
 		if (player != null) {
 			this.playerRepository.delete(player);
-			status = true;
+			return true;
 		}
-		return status;
+		return false;
 	}
 	
 }

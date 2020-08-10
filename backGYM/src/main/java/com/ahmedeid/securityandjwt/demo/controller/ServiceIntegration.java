@@ -132,7 +132,7 @@ public class ServiceIntegration {
 			persistPlayer.setDateModify(new Date());
 			persistPlayer.setCode((System.currentTimeMillis() + 12) + 3000);
 			persistPlayer.setSubscriptionNo(player.getSubscriptionNo() + 1);
-			persistPlayer.setPlayerImage("player-logo.png");
+			persistPlayer.setPlayerImage("player.jpg");
 			persistPlayer.setUser(user);
 
 			if (player.getSysExerciseType() != 0) {
@@ -283,12 +283,25 @@ public class ServiceIntegration {
 	@PutMapping(value = "/updatePlayerHulfMonthNOByCode/{code}")
 	public boolean updatePlayerHulfMonthNOByCode(@PathVariable long code, @RequestBody int hulfMonthNO) {
 		boolean status = false;
-		System.out.println("hulfMonthNO: "+hulfMonthNO);
 		Player player = this.playerService.getPlayerByCode(code);
 		if (hulfMonthNO != 0 && player != null) {
 			status = this.hqlDaoService.updatePlayerHulfMonthNOByCode(hulfMonthNO, code);
 		}
 
+		return status;
+	}
+
+	@PostMapping(value = "checkPasswordValidation/{userId}")
+	public boolean checkPasswordValidation(@PathVariable int userId, @RequestBody String password) {
+		
+		boolean status = false;
+		if(userId != 0 && password != null) {
+			User user = this.userService.getUserById(userId);
+			if(user != null) {
+				status = this.userService.checkOldPassword(password, user.getPassword());
+				return status;
+			}
+		}
 		return status;
 	}
 
